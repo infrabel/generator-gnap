@@ -57,7 +57,7 @@ var GNaPGenerator = yeoman.generators.Base.extend({
                 message: 'Which theme does your application use?',
                 choices: [
                 {
-                    name: 'GNaP.Themes.Web.GNaP.Angular',
+                    name: 'gnap-theme-gnap-angular',
                     value: 'gnap-theme-gnap-angular'
                 }],
                 default: 'gnap-theme-gnap-angular',
