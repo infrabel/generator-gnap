@@ -2,7 +2,7 @@
 
 (function () {
     angular
-        .module('<%= appName %>')
+        .module('<%= scriptAppName %>')
         .controller('MainGettingStartedController', MainGettingStartedController);
 
     MainGettingStartedController.$inject = [];

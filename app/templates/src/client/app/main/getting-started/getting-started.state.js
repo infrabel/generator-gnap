@@ -2,23 +2,24 @@
 
 (function () {
     angular
-        .module('<%= appName %>')
+        .module('<%= scriptAppName %>')
         .config(stateConfiguration);
 
     var stateSettings = {
-        name: 'main.forbidden',
+        name: 'main.getting-started',
         state: {
-            url: '/forbidden',
-            templateUrl: 'app/main/forbidden/forbidden.html',
-            controller: 'MainForbiddenController as vm'
+            url: '/getting-started',
+            templateUrl: 'app/main/getting-started/getting-started.html',
+            controller: 'MainGettingStartedController as vm'
         },
         title: {
-            textTranslationId: 'main.forbidden.title'
+            textTranslationId: 'main.getting-started.title'
         },
         breadcrumb: {
-            titleTranslationId: 'main.forbidden.breadcrumb'
+            titleTranslationId: 'main.getting-started.breadcrumb'
         },
-        translations: 'app/main/forbidden'
+        sidebarKey: 'main.getting-started',
+        translations: 'app/main/getting-started'
     };
 
     stateSettings.state.onEnter = onEnter;
@@ -30,20 +31,22 @@
         $stateProvider.state(stateSettings.name, stateSettings.state);
     }
 
-    onEnter.$inject = ['titleService', 'breadcrumbsService'];
+    onEnter.$inject = ['titleService', 'breadcrumbsService', 'sidebarService'];
 
-    function onEnter(titleService, breadcrumbsService) {
+    function onEnter(titleService, breadcrumbsService, sidebarService) {
         titleService.appendTitle(stateSettings.title);
 
         breadcrumbsService.addBreadcrumb(stateSettings.breadcrumb);
+        sidebarService.setSelected(stateSettings.sidebarKey);
     }
 
-    onExit.$inject = ['titleService', 'breadcrumbsService'];
+    onExit.$inject = ['titleService', 'breadcrumbsService', 'sidebarService'];
 
-    function onExit(titleService, breadcrumbsService) {
+    function onExit(titleService, breadcrumbsService, sidebarService) {
         titleService.removeLastTitle();
 
         breadcrumbsService.removeLastBreadcrumb();
+        sidebarService.clearSelected();
     }
 
     if (stateSettings.translations) {

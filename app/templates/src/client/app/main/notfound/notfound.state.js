@@ -2,7 +2,7 @@
 
 (function () {
     angular
-        .module('<%= appName %>')
+        .module('<%= scriptAppName %>')
         .config(stateConfiguration);
 
     var stateSettings = {

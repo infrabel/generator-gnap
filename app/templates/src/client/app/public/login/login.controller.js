@@ -2,7 +2,7 @@
 
 (function () {
     angular
-        .module('<%= appName %>')
+        .module('<%= scriptAppName %>')
         .controller('PublicLoginController', PublicLoginController);
 
     PublicLoginController.$inject = ['$location', '$state', 'sessionService', 'Token'];

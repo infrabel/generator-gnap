@@ -2,7 +2,7 @@
 
 (function () {
     angular
-        .module('<%= appName %>')
+        .module('<%= scriptAppName %>')
         .config(urlRouterConfiguration)
         .config(titleConfiguration)
         .config(authConfiguration)

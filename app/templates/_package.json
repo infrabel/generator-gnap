@@ -1,7 +1,7 @@
 {
-    "name": "<%= appName %>",
+    "name": "<%= _.slugify(_.humanize(appName)) %>",
     "description": "<%= appTitle %>",
-    "version": "0.0.1",
+    "version": "0.0.0",
     "private": true,
     "dependencies": {
         "<%= themeName %>": "*"

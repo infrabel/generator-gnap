@@ -7,7 +7,7 @@
  */
 (function () {
     angular
-        .module('<%= appName %>')
+        .module('<%= scriptAppName %>')
         .directive('sessionDropdown', sessionDropdown);
 
     sessionDropdown.$inject = ['$state', 'sessionService'];
