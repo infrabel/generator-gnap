@@ -1,5 +1,8 @@
+  [name]        # Application name
+  --app-suffix  # Apply '-app' suffix to AngularJS code
+
 Description:
-    Creates a full-stack AngularJS + Web API app
+  Creates a full-stack AngularJS + Web API app
 
 Example:
-    yo gnap
+  yo gnap
