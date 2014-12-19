@@ -9,20 +9,27 @@ var chalk = require('chalk');
 
 var Generator = module.exports = function Generator() {
   yeoman.generators.Base.apply(this, arguments);
+
+  this.argument('name', {
+    desc: 'Application name',
+    type: String,
+    required: false
+  });
+
+  this.option('app-suffix', {
+    desc: 'Allow a custom suffix to be added to the module name',
+    type: String,
+    required: false
+  });
 };
 
 util.inherits(Generator, yeoman.generators.Base);
 
 Generator.prototype.init = function init() {
-    this.argument('name', { type: String, required: false });
+    // Either the user passed an application name,
+    // or we use the current directory name
     this.appName = this.name || path.basename(process.cwd());
     this.appName = this._.slugify(this._.humanize(this.appName));
-
-    this.option('app-suffix', {
-        desc: 'Allow a custom suffix to be added to the module name',
-        type: String,
-        required: 'false'
-    });
 
     this.scriptAppName = this.appName + utils.appName(this);
     this.appPath = this.env.options.appPath;
