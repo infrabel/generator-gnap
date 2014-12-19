@@ -2,7 +2,7 @@
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
-var genUtils = require('../util.js');
+var utils = require('../utils.js');
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var chalk = require('chalk');
@@ -19,7 +19,7 @@ var GNaPGenerator = yeoman.generators.Base.extend({
             required: 'false'
         });
 
-        this.scriptAppName = this.appName + genUtils.appName(this);
+        this.scriptAppName = this.appName + utils.appName(this);
         this.appPath = this.env.options.appPath;
         this.pkg = require('../package.json');
 
@@ -80,14 +80,14 @@ var GNaPGenerator = yeoman.generators.Base.extend({
             name: 'appTitle',
             message: 'What is the title of your application?',
             default: this._.titleize(this._.humanize(this.appName)),
-            validate: function (input) { return genUtils.inputRequired(input, 'Project title'); }
+            validate: function (input) { return utils.inputRequired(input, 'Project title'); }
         },
 
         {
             type: 'input',
             name: 'portNumber',
             message: 'Which port should the development server run on?',
-            validate: function (input) { return genUtils.isValidPortNumber(input); },
+            validate: function (input) { return utils.isValidPortNumber(input); },
             default: 9000
         }];
 
@@ -119,7 +119,7 @@ var GNaPGenerator = yeoman.generators.Base.extend({
                 value: 'other'
             }],
             default: 'gnap-theme-gnap-angular',
-            validate: function (input) { return genUtils.inputRequired(input, 'Theme'); },
+            validate: function (input) { return utils.inputRequired(input, 'Theme'); },
             filter: function (input) { return input.toLowerCase(); }
         }];
 
@@ -127,7 +127,7 @@ var GNaPGenerator = yeoman.generators.Base.extend({
             type: 'input',
             name: 'themeName',
             message: 'What is the npm name of the theme you wish to use?',
-            validate: function (input) { return genUtils.inputRequired(input, 'Theme'); },
+            validate: function (input) { return utils.inputRequired(input, 'Theme'); },
             filter: function (input) { return input.toLowerCase(); }
         }];
 
@@ -177,7 +177,7 @@ var GNaPGenerator = yeoman.generators.Base.extend({
         this.log('\n# Generate\n');
 
         this.sourceRoot(path.join(__dirname, './templates'));
-        genUtils.processDirectory(this, '.', '.');
+        utils.processDirectory(this, '.', '.');
     },
 
     end: function () {
