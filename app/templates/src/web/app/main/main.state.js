@@ -106,8 +106,8 @@
                 titleTranslationId: 'sidebar.items.main.getting-started',
                 icon: 'icon-fire',
                 state: 'main.getting-started'
-            }// ======= yeoman sidebar hook =======
-             // Note: Do not remove the above hook if you wish the sidebar to remain working
+            } // ======= yeoman sidebar hook =======
+              // Note: Do not remove the above hook if you wish the sidebar to remain working
         ]);
     }
 })();

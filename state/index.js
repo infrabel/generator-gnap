@@ -18,6 +18,8 @@ Generator.prototype.init = function init() {
     if (!this.configExists)
         return;
 
+    // TODO: Need to check if parent states are present and warn the user if they are not
+
     // stateName: main.test.show
     this.stateName = this.name.toLowerCase();
 
@@ -105,51 +107,74 @@ Generator.prototype.generalPrompts = function generalPrompts() {
 };
 
 Generator.prototype.generate = function generate() {
+    if (!this.configExists)
+        return;
+
     utils.processDirectory(this, '.', this.destinationPath(this.fullPath));
 };
 
-/*
-    writing: {
-        app: function () {
+Generator.prototype.updateIndex = function updateIndex() {
+    if (!this.configExists)
+        return;
 
-            self.updateFile = function (path, hook, replacement) {
-                var file = self.readFileAsString(path);
-                file = file.replace(hook, replacement);
-                self.writeFileFromString(file, path);
-            };
+    // TODO: We should only rewrite things on first add? Right now it always appends
+    //       Probably something related with newlines
+    utils.rewriteFile({
+        file: 'src/web/index.html',
+        needle: '<script src="app/app.config.js"></script>',
+        splicable: [
+            '',
+            '<script src="' + this.generatedPath + '/' + this.stateNameLast + '.state.js"></script>',
+            '<script src="' + this.generatedPath + '/' + this.stateNameLast + '.controller.js"></script>'
+        ]
+    });
+};
 
-            // TODO: We should only rewrite things on first add? Right now it always appends
+Generator.prototype.updateSidebar = function updateIndex() {
+    if (!this.configExists)
+        return;
 
-            // update index.html
-            var appHook = '<script src="app/app.config.js"></script>';
-            self.updateFile('src/index.html', appHook, appHook + '\r\n\r\n        <script src="' + generatedPath + '/' + self.stateNameLast + '.state.js"></script>\r\n        <script src="' + generatedPath + '/' + self.stateNameLast + '.controller.js"></script>');
+    if (!this.stateVisibleInSidebar)
+        return;
 
-            // add to sidebar if required, as well as the translations for the sidebar
-            if (self.stateVisibleInSidebar) {
-                var sidebarHook = '// ======= yeoman sidebar hook =======';
-                var sidebarItem = ",\n" +
-                    "            {\n" +
-                    "                key: '" + self.stateName + "',\n" +
-                    "                titleTranslationId: 'sidebar.items." + self.stateName + "',\n" +
-                    "                icon: 'icon-circle-blank',\n" +
-                    "                state: '" + self.stateName + "'\n" +
-                    "            }" + sidebarHook;
+    utils.rewriteFile({
+        file: 'src/web/app/main/main.state.js',
+        needle: '} // ======= yeoman sidebar hook =======',
+        spliceBefore: true,
+        splicable: [
+            '},',
+            '{',
+            '   key: \'' + this.stateName + '\',',
+            '   titleTranslationId: \'sidebar.items.' + this.stateName + '\',',
+            '   icon: \'icon-circle-blank\',',
+            '   state: \'' + this.stateName + '\''
+        ]
+    });
 
-                var translationHook = '"items": {';
-                var translationItemEnglish = translationHook + '\n            "' + self.stateName + '": "' + self.stateTitleEnglish + '",';
-                var translationItemDutch = translationHook + '\n            "' + self.stateName + '": "' + self.stateTitleDutch + '",';
-                var translationItemFrench = translationHook + '\n            "' + self.stateName + '": "' + self.stateTitleFrench + '",';
+    utils.rewriteFile({
+        file: 'src/web/app/main/translations.en.json',
+        needle: '"items": {',
+        splicable: [
+            '    "' + this.stateName + '": "' + this.stateTitleEnglish + '",'
+        ]
+    });
 
-                self.updateFile('src/app/main/main.state.js', sidebarHook, sidebarItem);
-                self.updateFile('src/app/main/translations.en.json', translationHook, translationItemEnglish);
-                self.updateFile('src/app/main/translations.nl.json', translationHook, translationItemDutch);
-                self.updateFile('src/app/main/translations.fr.json', translationHook, translationItemFrench);
-            }
+    utils.rewriteFile({
+        file: 'src/web/app/main/translations.nl.json',
+        needle: '"items": {',
+        splicable: [
+            '    "' + this.stateName + '": "' + this.stateTitleDutch + '",'
+        ]
+    });
 
-            // TODO: Need to check if parent states are present and warn the user if they are not
-        }
-    },
-*/
+    utils.rewriteFile({
+        file: 'src/web/app/main/translations.fr.json',
+        needle: '"items": {',
+        splicable: [
+            '    "' + this.stateName + '": "' + this.stateTitleFrench + '",'
+        ]
+    });
+};
 
 Generator.prototype.end = function end() {
     var green = chalk.green,

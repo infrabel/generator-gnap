@@ -3,8 +3,8 @@ var path = require('path');
 var fs = require('fs');
 
 module.exports = {
-//     rewrite: rewrite,
-//     rewriteFile: rewriteFile,
+    rewrite: rewrite,
+    rewriteFile: rewriteFile,
     processDirectory: processDirectory,
     inputRequired: inputRequired,
     isValidPortNumber: isValidPortNumber
@@ -30,56 +30,57 @@ function isValidPortNumber(args) {
     return true;
 };
 
-// function rewriteFile (args) {
-//     args.path = args.path || process.cwd();
-//     var fullPath = path.join(args.path, args.file);
-//
-//     args.haystack = fs.readFileSync(fullPath, 'utf8');
-//     var body = rewrite(args);
-//
-//     fs.writeFileSync(fullPath, body);
-// }
-//
-// function escapeRegExp (str) {
-//     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-// }
-//
-// function rewrite (args) {
-//     // check if splicable is already in the body text
-//     var re = new RegExp(args.splicable.map(function (line) {
-//         return '\s*' + escapeRegExp(line);
-//     }).join('\n'));
-//
-//     if (re.test(args.haystack)) {
-//         return args.haystack;
-//     }
-//
-//     var lines = args.haystack.split('\n');
-//
-//     var otherwiseLineIndex = -1;
-//     lines.forEach(function (line, i) {
-//         if (line.indexOf(args.needle) !== -1) {
-//             otherwiseLineIndex = i;
-//         }
-//     });
-//     if(otherwiseLineIndex === -1) return lines.join('\n');
-//
-//     var spaces = 0;
-//     while (lines[otherwiseLineIndex].charAt(spaces) === ' ') {
-//         spaces += 1;
-//     }
-//
-//     var spaceStr = '';
-//     while ((spaces -= 1) >= 0) {
-//         spaceStr += ' ';
-//     }
-//
-//     lines.splice(otherwiseLineIndex + 1, 0, args.splicable.map(function (line) {
-//         return spaceStr + line;
-//     }).join('\n'));
-//
-//     return lines.join('\n');
-// }
+function rewriteFile (args) {
+    args.path = args.path || process.cwd();
+    var fullPath = path.join(args.path, args.file);
+
+    args.haystack = fs.readFileSync(fullPath, 'utf8');
+    var body = rewrite(args);
+
+    fs.writeFileSync(fullPath, body);
+}
+
+function escapeRegExp (str) {
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+}
+
+function rewrite (args) {
+    // check if splicable is already in the body text
+    var re = new RegExp(args.splicable.map(function (line) {
+        return '\s*' + escapeRegExp(line);
+    }).join('\n'));
+
+    if (re.test(args.haystack)) {
+        return args.haystack;
+    }
+
+    var lines = args.haystack.split('\n');
+
+    var otherwiseLineIndex = -1;
+    lines.forEach(function (line, i) {
+        if (line.indexOf(args.needle) !== -1) {
+            otherwiseLineIndex = i;
+        }
+    });
+    if (otherwiseLineIndex === -1) return lines.join('\n');
+
+    var spaces = 0;
+    while (lines[otherwiseLineIndex].charAt(spaces) === ' ') {
+        spaces += 1;
+    }
+
+    var spaceStr = '';
+    while ((spaces -= 1) >= 0) {
+        spaceStr += ' ';
+    }
+
+    args.spliceBefore = args.spliceBefore || false;
+    lines.splice(otherwiseLineIndex + (args.spliceBefore ? 0 : 1), 0, args.splicable.map(function (line) {
+        return spaceStr + line;
+    }).join('\n'));
+
+    return lines.join('\n');
+}
 
 function filterFile (template) {
     // Find matches for parans
@@ -113,8 +114,8 @@ function processDirectory (self, source, destination) {
     var root = self.isPathAbsolute(source) ? source : self.templatePath(source);
     var target = self.isPathAbsolute(destination) ? destination : self.destinationPath(destination);
 
-    self.log('Root: ' + root);
-    self.log('Target: ' + target);
+    // self.log('Root: ' + root);
+    // self.log('Target: ' + target);
 
     var files = self.expandFiles('**', { dot: true, cwd: root });
     var dest, src;

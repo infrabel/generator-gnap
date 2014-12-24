@@ -206,43 +206,48 @@ Generator.prototype.saveSettings = function saveSettings() {
 };
 
 Generator.prototype.generate = function generate() {
-    this.log('\n# Generate\n');
+    if (!this.useExistingConfig)
+        this.log();
+
+    this.log('# Generate\n');
 
     utils.processDirectory(this, '.', '.');
 };
 
+Generator.prototype.install = function install() {
+    var green = chalk.green,
+        cyan = chalk.cyan;
+
+    this.log(green('   create') + ' theme (' + cyan(this.themeName) + ')');
+    this.npmInstall([this.themeName]);
+
+    this.npmInstall(['grunt',
+                     'grunt-autoprefixer',
+                     'grunt-contrib-clean',
+                     'grunt-contrib-concat',
+                     'grunt-contrib-connect',
+                     'grunt-contrib-copy',
+                     'grunt-contrib-cssmin',
+                     'grunt-contrib-htmlmin',
+                     'grunt-contrib-jshint',
+                     'grunt-contrib-uglify',
+                     'grunt-contrib-watch',
+                     'grunt-rev',
+                     'grunt-text-replace',
+                     'grunt-usemin',
+                     'jshint-stylish',
+                     'load-grunt-tasks',
+                     'time-grunt'], { 'saveDev': true });
+};
+
 Generator.prototype.end = function end() {
-    var done = this.async(),
-        green = chalk.green,
+    var green = chalk.green,
         cyan = chalk.cyan,
         white = chalk.white,
         yellow = chalk.bold.yellow;
 
-    this.log(green('   create') + ' theme (' + cyan(this.themeName) + ')');
-    this.npmInstall([this.themeName], {}, function() {
-        this.npmInstall(['grunt',
-                         'grunt-autoprefixer',
-                         'grunt-contrib-clean',
-                         'grunt-contrib-concat',
-                         'grunt-contrib-connect',
-                         'grunt-contrib-copy',
-                         'grunt-contrib-cssmin',
-                         'grunt-contrib-htmlmin',
-                         'grunt-contrib-jshint',
-                         'grunt-contrib-uglify',
-                         'grunt-contrib-watch',
-                         'grunt-rev',
-                         'grunt-text-replace',
-                         'grunt-usemin',
-                         'jshint-stylish',
-                         'load-grunt-tasks',
-                         'time-grunt'], { 'saveDev': true }, function() {
-            this.log();
-            this.log(green('!') + white(' Successfully created ') + cyan(this.appName));
-            this.log(green('!') + white(' To see your site, run:'));
-            this.log('\t' + yellow('grunt serve'));
-
-            done();
-        }.bind(this));
-    }.bind(this));
+    this.log();
+    this.log(green('!') + white(' Successfully created ') + cyan(this.appName));
+    this.log(green('!') + white(' To see your site, run:'));
+    this.log('\t' + yellow('grunt serve'));
 };
