@@ -1,155 +1,122 @@
 'use strict';
-var util = require('util');
+var fs = require('fs');
 var path = require('path');
+var util = require('util');
+var utils = require('../utils.js');
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
-var clc = require('cli-color');
+var chalk = require('chalk');
+var ScriptBase = require('../script-base.js');
 
-var GNaPGenerator = yeoman.generators.NamedBase.extend({
-    initializing: function () {
-        this.pkg = require('../package.json');
+var Generator = module.exports = function Generator() {
+    ScriptBase.apply(this, arguments);
+};
+
+util.inherits(Generator, ScriptBase);
+
+Generator.prototype.init = function init() {
+    if (!this.configExists)
+        return;
+
+    // stateName: main.test.show
+    this.stateName = this.name.toLowerCase();
+
+    // stateNameCapitalized: MainTestShow
+    this.stateNameCapitalized = this._.classify(this.stateName);
+
+    // stateNameParts: [src, web, app, main, test, show]
+    this.stateNameParts = this.stateName.split('.');
+    this.stateNameParts.splice(0, 0, 'src', 'web', 'app');
+
+    // stateNameLast: show
+    this.stateNameLast = this.stateNameParts[this.stateNameParts.length - 1];
+    this.name = this.stateNameLast;
+
+    // stateNameGuessedPath: /test/show
+    if (this._.count(this.stateName, '.') > 1) {
+        var stateNameSplitted = this.stateName.split('.');
+        stateNameSplitted.splice(0, 1);
+
+        this.stateNameGuessedPath = '/' + stateNameSplitted.join('/');
+    } else {
+        this.stateNameGuessedPath = '/' + this.stateNameLast;
+    }
+
+    this.fullPath = this.stateNameParts.join('/');
+
+    this.generatedPath = this.fullPath.replace('src/web/', '');
+};
+
+Generator.prototype.generalPrompts = function generalPrompts() {
+    if (!this.configExists)
+        return;
+
+    var done = this.async(),
+        red = chalk.bold.red;
+
+    var generalPrompts = [{
+        type: 'input',
+        name: 'url',
+        message: 'What will the url of your state be?',
+        default: this.stateNameGuessedPath,
+        validate: function (input) { return utils.inputRequired(input, 'Url'); },
+        filter: function (input) { return input.toLowerCase(); }
     },
 
-    prompting: function () {
-        var self = this,
-            done = self.async();
-
-        self.appName = self.config.get('app-name');
-
-        self.toTitleCase = function (str) {
-            return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
-        };
-
-        self.escapeRegExp = function(string) {
-            return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-        };
-
-        self.replaceAll = function(find, replace, str) {
-            return str.replace(new RegExp(self.escapeRegExp(find), 'g'), replace);
-        };
-
-        self.inputRequired = function (input, inputName) {
-            if (input)
-                return true;
-
-            return inputName + ' is required!';
-        };
-
-        // stateName: main.test.show
-        self.stateName = self['name'].toLowerCase();
-
-        // stateNameCapitalized: MainTestShow
-        self.stateNameCapitalized = self.replaceAll(' ', '', self.toTitleCase(self.replaceAll('.', ' ', self.stateName)));
-
-        // stateNameParts: [src, app, main, test, show]
-        self.stateNameParts = self.stateName.split('.');
-        self.stateNameParts.splice(0, 0, 'src', 'app');
-
-        // stateNameLast: show
-        self.stateNameLast = self.stateNameParts[self.stateNameParts.length - 1];
-
-        var prompts = [
-            {
-                type: 'input',
-                name: 'url',
-                message: 'What is the url of the state?',
-                validate: function (input) { return self.inputRequired(input, 'Url'); },
-                default: '/' + self.stateNameLast
-            },
-
-            {
-                type: 'input',
-                name: 'title-english',
-                message: 'What is the ' + clc.redBright.bold('english') + ' title of the state?',
-                validate: function (input) { return self.inputRequired(input, 'English title'); }
-            },
-
-            {
-                type: 'input',
-                name: 'title-dutch',
-                message: 'What is the ' + clc.redBright.bold('dutch') + ' title of the state?',
-                validate: function (input) { return self.inputRequired(input, 'Dutch title'); }
-            },
-
-            {
-                type: 'input',
-                name: 'title-french',
-                message: 'What is the ' + clc.redBright.bold('french') + ' title of the state?',
-                validate: function (input) { return self.inputRequired(input, 'French title'); }
-            },
-
-            {
-                type: 'confirm',
-                name: 'sidebar',
-                message: 'Should the state show up in the sidebar?',
-                default: false
-            }
-        ];
-
-        self.prompt(prompts, function (props) {
-            this.stateUrl = props['url'].toLowerCase();
-
-            this.stateTitleEnglish = props['title-english'];
-            this.stateTitleDutch = props['title-dutch'];
-            this.stateTitleFrench = props['title-french'];
-            this.stateVisibleInSidebar = props['sidebar'];
-
-            done();
-        }.bind(self));
+    {
+        type: 'input',
+        name: 'titleEnglish',
+        message: 'What is the ' + red('english') + ' title of the state?',
+        validate: function (input) { return utils.inputRequired(input, 'English title'); }
     },
 
+    {
+        type: 'input',
+        name: 'titleDutch',
+        message: 'What is the ' + red('dutch') + ' title of the state?',
+        validate: function (input) { return utils.inputRequired(input, 'Dutch title'); }
+    },
+
+    {
+        type: 'input',
+        name: 'titleFrench',
+        message: 'What is the ' + red('french') + ' title of the state?',
+        validate: function (input) { return utils.inputRequired(input, 'French title'); }
+    },
+
+    {
+        type: 'confirm',
+        name: 'sidebar',
+        message: 'Will the state show up in the sidebar?',
+        default: false
+    }];
+
+    this.prompt(generalPrompts, function (answers) {
+        this.stateUrl = answers.url;
+
+        this.stateTitleEnglish = answers.titleEnglish;
+        this.stateTitleDutch = answers.titleDutch;
+        this.stateTitleFrench = answers.titleFrench;
+
+        this.stateVisibleInSidebar = answers.sidebar;
+
+        done();
+    }.bind(this));
+};
+
+Generator.prototype.generate = function generate() {
+    utils.processDirectory(this, '.', this.destinationPath(this.fullPath));
+};
+
+/*
     writing: {
         app: function () {
-            var self = this,
-                fullPath = self.stateNameParts.join('/'),
-                generatedPath = fullPath.replace('src/', '');
 
             self.updateFile = function (path, hook, replacement) {
                 var file = self.readFileAsString(path);
                 file = file.replace(hook, replacement);
                 self.writeFileFromString(file, path);
             };
-
-            self.dest.mkdir(fullPath);
-
-            self.template('controller.js', fullPath + '/' + self.stateNameLast + '.controller.js',
-            {
-                appName: self.appName,
-                stateNameCapitalized: self.stateNameCapitalized
-            });
-
-            self.template('state.html', fullPath + '/' + self.stateNameLast + '.html',
-            {
-                 stateName: self.stateName
-            });
-
-            self.template('state.js', fullPath + '/' + self.stateNameLast + '.state.js',
-            {
-                appName: self.appName,
-                stateName: self.stateName,
-                stateNameCapitalized: self.stateNameCapitalized,
-                stateNameLast: self.stateNameLast,
-                generatedPath: generatedPath,
-                stateUrl: self.stateUrl
-            });
-
-            self.template('translations.json', fullPath + '/translations.en.json',
-            {
-                stateName: self.stateName,
-                stateTitle: self.stateTitleEnglish
-            });
-
-            self.template('translations.json', fullPath + '/translations.nl.json',
-            {
-                stateName: self.stateName,
-                stateTitle: self.stateTitleDutch
-            });
-
-            self.template('translations.json', fullPath + '/translations.fr.json',
-            {
-                stateName: self.stateName,
-                stateTitle: self.stateTitleFrench
-            });
 
             // TODO: We should only rewrite things on first add? Right now it always appends
 
@@ -182,13 +149,13 @@ var GNaPGenerator = yeoman.generators.NamedBase.extend({
             // TODO: Need to check if parent states are present and warn the user if they are not
         }
     },
+*/
 
-    end: function () {
-        var self = this;
+Generator.prototype.end = function end() {
+    var green = chalk.green,
+        cyan = chalk.cyan,
+        white = chalk.white;
 
-        self.log();
-        self.log(clc.green('!') + clc.whiteBright(' Successfully created state ') + clc.cyan(self.stateName));
-    }
-});
-
-module.exports = GNaPGenerator;
+    this.log();
+    this.log(green('!') + white(' Successfully created state ') + cyan(this.stateName));
+};

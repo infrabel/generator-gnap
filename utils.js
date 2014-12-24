@@ -110,7 +110,12 @@ function templateIsUsable (self, filteredFile) {
 }
 
 function processDirectory (self, source, destination) {
-    var root = self.isPathAbsolute(source) ? source : path.join(self.sourceRoot(), source);
+    var root = self.isPathAbsolute(source) ? source : self.templatePath(source);
+    var target = self.isPathAbsolute(destination) ? destination : self.destinationPath(destination);
+
+    self.log('Root: ' + root);
+    self.log('Target: ' + target);
+
     var files = self.expandFiles('**', { dot: true, cwd: root });
     var dest, src;
 
@@ -123,7 +128,7 @@ function processDirectory (self, source, destination) {
         var copy = false, stripped;
 
         src = path.join(root, f);
-        dest = path.join(destination, name);
+        dest = path.join(target, name);
 
         if (path.basename(dest).indexOf('_') === 0) {
             stripped = path.basename(dest).replace(/^_/, '');

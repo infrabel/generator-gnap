@@ -1,0 +1,6 @@
+{
+    "<%= stateName %>":  {
+        "title": "<%= stateTitleEnglish %>",
+        "breadcrumb": "<%= stateTitleEnglish %>"
+    }
+}

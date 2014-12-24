@@ -203,14 +203,11 @@ Generator.prototype.saveSettings = function saveSettings() {
     // client
     this.config.set('themeName', this.themeName);
     this.config.set('filters', this.filters);
-
-    this.config.forceSave();
 };
 
 Generator.prototype.generate = function generate() {
     this.log('\n# Generate\n');
 
-    this.sourceRoot(path.join(__dirname, './templates'));
     utils.processDirectory(this, '.', '.');
 };
 
