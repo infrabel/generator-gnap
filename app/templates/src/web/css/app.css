@@ -2,6 +2,10 @@
     margin-bottom: 20px;
 }
 
+.widget-box p:last-child {
+    margin: 0px;
+}
+
 .website-created {
     text-align: center;
 }

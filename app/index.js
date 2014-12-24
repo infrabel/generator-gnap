@@ -17,7 +17,7 @@ var Generator = module.exports = function Generator() {
   });
 
   this.option('app-suffix', {
-    desc: 'Allow a custom suffix to be added to the module name',
+    desc: 'Appends \'app\' suffix to the module name',
     type: String,
     required: false
   });
@@ -25,14 +25,15 @@ var Generator = module.exports = function Generator() {
 
 util.inherits(Generator, yeoman.generators.Base);
 
+// Start up the generator and analyse arguments and options
+// Gives us: appName, scriptAppName, pkg, filters (empty)
 Generator.prototype.init = function init() {
     // Either the user passed an application name,
     // or we use the current directory name
     this.appName = this.name || path.basename(process.cwd());
     this.appName = this._.slugify(this._.humanize(this.appName));
+    this.scriptAppName = this.appName + (this.options['app-suffix'] ? '-app' : '');
 
-    this.scriptAppName = this.appName + utils.appName(this);
-    this.appPath = this.env.options.appPath;
     this.pkg = require('../package.json');
 
     this.filters = {};
@@ -46,19 +47,21 @@ Generator.prototype.info = function info() {
     this.log('Out of the box I create an AngularJS app with an ASP.NET Web API server.\n');
 };
 
+// Check if there is already a config file and if we should re-use it
+// Gives us: configExists, useExistingConfig
 Generator.prototype.checkForConfig = function checkForConfig() {
     var done = this.async();
 
-    this.configExists = this.config.get('filters');
+    this.configExists = this.config.get('appTitle');
 
     if (this.configExists) {
         this.prompt([{
             type: 'confirm',
-            name: 'skipConfig',
+            name: 'useExistingConfig',
             message: 'Existing .yo-rc configuration found, would you like to use it?',
             default: true,
         }], function (answers) {
-            this.skipConfig = answers.skipConfig;
+            this.useExistingConfig = answers.useExistingConfig;
 
             this.log('');
             done();
@@ -68,9 +71,14 @@ Generator.prototype.checkForConfig = function checkForConfig() {
     }
 };
 
+// Load the existing config if it is present and if we need to re-use it
+// Gives us: appTitle, portNumber, themeName, filters
 Generator.prototype.loadConfig = function loadConfig() {
-    if (!this.configExists) return;
-    if (!this.skipConfig) return;
+    if (!this.configExists)
+      return;
+
+    if (!this.useExistingConfig)
+      return;
 
     // general
     this.appTitle = this.config.get('appTitle');
@@ -81,8 +89,12 @@ Generator.prototype.loadConfig = function loadConfig() {
     this.filters = this.config.get('filters');
 };
 
+// Asks general questions to set up the generator
+// Gives us: appTitle, portNumber
 Generator.prototype.generalPrompts = function generalPrompts() {
-    if (this.skipConfig) return;
+    if (this.useExistingConfig)
+      return;
+
     var done = this.async();
 
     this.log('# General\n');
@@ -112,8 +124,12 @@ Generator.prototype.generalPrompts = function generalPrompts() {
     }.bind(this));
 };
 
+// Asks client side questions to set up the generator
+// Gives us: themeName, filters.js, filters.html, filters.css, filters.uirouter
 Generator.prototype.clientPrompts = function clientPrompts() {
-    if (this.skipConfig) return;
+    if (this.useExistingConfig)
+      return;
+
     var done = this.async();
 
     this.log('\n# Client\n');
@@ -165,14 +181,20 @@ Generator.prototype.clientPrompts = function clientPrompts() {
 };
 
 // serverPrompts: function() {
-//     if (this.skipConfig) return;
+//     if (this.useExistingConfig) return;
 //     var cb = this.async();
 //
 //     this.log('\n# Server\n');
 // },
 
+// Saves the settings in case we don't reuse an existing config
 Generator.prototype.saveSettings = function saveSettings() {
-    if (this.skipConfig) return;
+    // some settings need to be always persisted
+    this.config.set('appName', this.appName);
+    this.config.set('scriptAppName', this.scriptAppName);
+
+    if (this.useExistingConfig)
+      return;
 
     // general
     this.config.set('appTitle', this.appTitle);

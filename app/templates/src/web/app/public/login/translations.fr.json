@@ -8,8 +8,8 @@
             "Password": "Mot de passe",
             "Remember Me": "Se rappeler de moi",
             "Login": "Connexion",
-            "Enter your username": "",
-            "Enter your password": ""
+            "Enter your username": "Veuillez introduire votre nom d'utilisateur",
+            "Enter your password": "Veuillez introduire votre mot de passe"
         }
     }
 }

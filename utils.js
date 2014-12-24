@@ -5,7 +5,6 @@ var fs = require('fs');
 module.exports = {
 //     rewrite: rewrite,
 //     rewriteFile: rewriteFile,
-    appName: appName,
     processDirectory: processDirectory,
     inputRequired: inputRequired,
     isValidPortNumber: isValidPortNumber
@@ -81,20 +80,6 @@ function isValidPortNumber(args) {
 //
 //     return lines.join('\n');
 // }
-
-function appName (self) {
-    var counter = 0, suffix = self.options['app-suffix'];
-    // Have to check this because of generator bug #386
-    process.argv.forEach(function(val) {
-        if (val.indexOf('--app-suffix') > -1) {
-            counter++;
-        }
-    });
-    if (counter === 0 || (typeof suffix === 'boolean' && suffix)) {
-        suffix = 'app';
-    }
-    return suffix ? '-' + self._.slugify(suffix) : '';
-}
 
 function filterFile (template) {
     // Find matches for parans

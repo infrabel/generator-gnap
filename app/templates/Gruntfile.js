@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         watch: {
             js: {
-                files: ['./src/client/app/**/*.js'],
+                files: ['./src/web/app/**/*.js'],
                 tasks: ['jshint'],
                 options: {
                     livereload: '<%%= connect.options.livereload %>',
@@ -16,14 +16,14 @@ module.exports = function(grunt) {
                 }
             },
             css: {
-                files: ['./src/client/css/**/*.css'],
+                files: ['./src/web/css/**/*.css'],
                 tasks: ['copy:css', 'autoprefixer']
             },
             livereload: {
                 files: [
-                    './src/client/index.html',
-                    './src/client/app/**/*.html',
-                    './src/client/app/**/*.json',
+                    './src/web/index.html',
+                    './src/web/app/**/*.html',
+                    './src/web/app/**/*.json',
                     './.tmp/css/**/*.css'
                 ],
                 options: {
@@ -46,17 +46,18 @@ module.exports = function(grunt) {
                     middleware: function(connect) {
                         return [
                             connect().use('/css', connect.static('./.tmp/css')),
-                            connect.static('./src/client'),
+                            connect.static('./src/web'),
                             connect().use('/node_modules/<%= themeName %>', connect.static('./node_modules/<%= themeName %>')),
                             connect().use('/js/gnap', connect.static('./node_modules/<%= themeName %>/js/gnap')),
-                            connect().use('/js/angular', connect.static('./node_modules/<%= themeName %>/js/angular'))
+                            connect().use('/js/angular', connect.static('./node_modules/<%= themeName %>/js/angular')),
+                            connect().use('/js/debug/angular', connect.static('./node_modules/<%= themeName %>/js/debug/angular'))
                         ];
                     }
                 }
             },
             dist: {
                 options: {
-                    base: './dist/client',
+                    base: './dist/web',
                     livereload: false
                 }
             }
@@ -80,18 +81,18 @@ module.exports = function(grunt) {
 
         useminPrepare: {
             options: {
-                dest: 'dist/client/'
+                dest: 'dist/web/'
             },
-            html: './src/client/index.html'
+            html: './src/web/index.html'
         },
 
         usemin: {
             options: {
                 assetsDirs: [
-                    'dist/client',
-                    'dist/client/vendor/images',
-                    'dist/client/vendor/css',
-                    'dist/client/vendor/fonts'
+                    'dist/web',
+                    'dist/web/vendor/images',
+                    'dist/web/vendor/css',
+                    'dist/web/vendor/fonts'
                 ],
                 patterns: {
                     js: [
@@ -99,9 +100,9 @@ module.exports = function(grunt) {
                     ]
                 }
             },
-            html: ['./dist/client/index.html'],
-            css: ['./dist/client/app/css/*.css', './dist/client/vendor/css/*.css'],
-            js: ['./dist/client/app/js/*.js'],
+            html: ['./dist/web/index.html'],
+            css: ['./dist/web/app/css/*.css', './dist/web/vendor/css/*.css'],
+            js: ['./dist/web/app/js/*.js'],
         },
 
         rev: {
@@ -109,22 +110,22 @@ module.exports = function(grunt) {
                 files: {
                     src: [
                         // TODO: dist/app/ *.json
-                        './dist/client/app/**/*.html',
-                        './dist/client/app/js/*.js',
-                        './dist/client/app/css/*.css',
-                        './dist/client/vendor/css/*.css',
-                        './dist/client/vendor/fonts/*.*',
-                        './dist/client/vendor/images/**/*.*',
-                        './dist/client/vendor/js/*.js'
+                        './dist/web/app/**/*.html',
+                        './dist/web/app/js/*.js',
+                        './dist/web/app/css/*.css',
+                        './dist/web/vendor/css/*.css',
+                        './dist/web/vendor/fonts/*.*',
+                        './dist/web/vendor/images/**/*.*',
+                        './dist/web/vendor/js/*.js'
                     ]
                 }
             },
             dist: {
                 files: {
                     src: [
-                        './dist/client/app/css/*.css',
-                        './dist/client/vendor/css/*.css',
-                        './dist/client/app/js/*.js'
+                        './dist/web/app/css/*.css',
+                        './dist/web/vendor/css/*.css',
+                        './dist/web/app/js/*.js'
                     ]
                 }
             }
@@ -137,8 +138,8 @@ module.exports = function(grunt) {
                         dot: true,
                         src: [
                             '.tmp',
-                            'dist/client/*',
-                            '!dist/client/.git*'
+                            'dist/web/*',
+                            '!dist/web/.git*'
                         ]
                     }
                 ]
@@ -150,7 +151,7 @@ module.exports = function(grunt) {
             css: {
                 expand: true,
                 dot: true,
-                cwd: './src/client/css/',
+                cwd: './src/web/css/',
                 dest: '.tmp/css/',
                 src: '**/*.css'
             },
@@ -159,8 +160,8 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'src/client',
-                        dest: 'dist/client',
+                        cwd: 'src/web',
+                        dest: 'dist/web',
                         src: [
                             './index.html',
                             './**/*.html',
@@ -171,7 +172,7 @@ module.exports = function(grunt) {
                         expand: true,
                         dot: true,
                         cwd: 'node_modules/<%= themeName %>',
-                        dest: './dist/client/vendor',
+                        dest: './dist/web/vendor',
                         src: [
                             './fonts/*.*',
                             './images/*.*',
@@ -186,7 +187,7 @@ module.exports = function(grunt) {
 
         replace: {
             translations: {
-                src: ['./dist/client/vendor/js/vendor.js'],
+                src: ['./dist/web/vendor/js/vendor.js'],
                 overwrite: true,
                 replacements: [
                     {
@@ -198,10 +199,10 @@ module.exports = function(grunt) {
 
             dist: {
                 src: [
-                    './dist/client/index.html',
-                    './dist/client/app/js/app.js',
-                    './dist/client/vendor/js/vendor.js',
-                    './dist/client/vendor/css/*.css'],
+                    './dist/web/index.html',
+                    './dist/web/app/js/app.js',
+                    './dist/web/vendor/js/vendor.js',
+                    './dist/web/vendor/css/*.css'],
                 overwrite: true,
                 replacements: [
                     {
@@ -250,9 +251,9 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         flatten: false,
-                        cwd: './dist/client/vendor/js/angular/i18n/',
+                        cwd: './dist/web/vendor/js/angular/i18n/',
                         src: ['./*.js'],
-                        dest: './dist/client/vendor/js/angular/i18n/'
+                        dest: './dist/web/vendor/js/angular/i18n/'
                     }
                 ]
             }
@@ -270,9 +271,9 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: './dist/client',
+                        cwd: './dist/web',
                         src: '**/*.html',
-                        dest: './dist/client'
+                        dest: './dist/web'
                     }
                 ]
             }
@@ -283,12 +284,12 @@ module.exports = function(grunt) {
                 files: [
                     {
                         dest: '.tmp/translations.json',
-                        src: ['./dist/client/vendor/**/translations.en.json',
-                              './dist/client/vendor/**/translations.fr.json',
-                              './dist/client/vendor/**/translations.nl.json',
-                              './dist/client/app/**/translations.en.json',
-                              './dist/client/app/**/translations.fr.json',
-                              './dist/client/app/**/translations.nl.json']
+                        src: ['./dist/web/vendor/**/translations.en.json',
+                              './dist/web/vendor/**/translations.fr.json',
+                              './dist/web/vendor/**/translations.nl.json',
+                              './dist/web/app/**/translations.en.json',
+                              './dist/web/app/**/translations.fr.json',
+                              './dist/web/app/**/translations.nl.json']
                     }
                 ]
             }
@@ -301,8 +302,8 @@ module.exports = function(grunt) {
             },
             all: [
                 'Gruntfile.js',
-                './src/client/app/*.js',
-                './src/client/app/**/*.js'
+                './src/web/app/*.js',
+                './src/web/app/**/*.js'
             ]
         }
     });
