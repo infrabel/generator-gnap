@@ -232,6 +232,8 @@ Generator.prototype.install = function install() {
                      'grunt-contrib-jshint',
                      'grunt-contrib-uglify',
                      'grunt-contrib-watch',
+                     'grunt-encoding',
+                     'grunt-newer',
                      'grunt-rev',
                      'grunt-text-replace',
                      'grunt-usemin',

@@ -17,7 +17,7 @@ module.exports = function(grunt) {
             },
             css: {
                 files: ['./src/web/css/**/*.css'],
-                tasks: ['copy:css', 'autoprefixer']
+                tasks: ['newer:encoding:all', 'copy:css', 'autoprefixer']
             },
             livereload: {
                 files: [
@@ -26,6 +26,7 @@ module.exports = function(grunt) {
                     './src/web/app/**/*.json',
                     './.tmp/css/**/*.css'
                 ],
+                tasks: ['newer:encoding:all'],
                 options: {
                     livereload: '<%%= connect.options.livereload %>',
                     livereloadOnError: false
@@ -305,6 +306,30 @@ module.exports = function(grunt) {
                 './src/web/app/*.js',
                 './src/web/app/**/*.js'
             ]
+        },
+
+        encoding: {
+            options: {
+                encoding: 'UTF-8'
+            },
+            all: {
+                files: {
+                    src: [
+                        './src/web/*.*',
+                        './src/web/**/*.*'
+                    ]
+                }
+            },
+            dist: {
+                files: {
+                    src: [
+                    './dist/web/*.*',
+                    './dist/web/**/*.*',
+                    '!./dist/web/vendor/*.*',
+                    '!./dist/web/vendor/**/*.*'
+                    ]
+                }
+            },
         }
     });
 
@@ -318,6 +343,7 @@ module.exports = function(grunt) {
         }
 
         grunt.task.run([
+            'newer:encoding:all',
             'clean:server',
             'copy:css',
             'autoprefixer',
@@ -336,6 +362,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('dist', [
+        'encoding:all',
         'clean:dist',
         'useminPrepare',
         'copy:css',
@@ -352,6 +379,7 @@ module.exports = function(grunt) {
         'usemin',
         'rev:dist',
         'usemin:html',
-        'htmlmin'
+        'htmlmin',
+        'encoding:dist'
     ]);
 };
