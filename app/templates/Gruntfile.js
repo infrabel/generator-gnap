@@ -165,7 +165,9 @@ module.exports = function(grunt) {
                         src: [
                             './index.html',
                             './**/*.html',
-                            './**/*.json'
+                            './**/*.json',
+                            './img/**/*.*',
+                            './images/**/*.*'
                         ]
                     },
                     {
