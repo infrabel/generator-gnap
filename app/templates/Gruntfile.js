@@ -25,6 +25,7 @@ module.exports = function(grunt) {
                     './src/index.html',
                     './src/app/**/*.html',
                     './src/app/**/*.json',
+                    './src/images/**/*.*',
                     './.tmp/css/**/*.css'
                 ],
                 options: {
@@ -90,6 +91,7 @@ module.exports = function(grunt) {
             options: {
                 assetsDirs: [
                     'dist',
+                    'dist/images',
                     'dist/vendor/images',
                     'dist/vendor/css',
                     'dist/vendor/fonts'
@@ -113,6 +115,7 @@ module.exports = function(grunt) {
                         './dist/app/**/*.html',
                         './dist/app/js/*.js',
                         './dist/app/css/*.css',
+                        './dist/images/**/*.*',
                         './dist/vendor/css/*.css',
                         './dist/vendor/fonts/*.*',
                         './dist/vendor/images/**/*.*',
@@ -166,7 +169,7 @@ module.exports = function(grunt) {
                             './index.html',
                             './**/*.html',
                             './**/*.json',
-                            './img/**/*.*',
+                            './images/*.*',
                             './images/**/*.*'
                         ]
                     },
@@ -285,8 +288,8 @@ module.exports = function(grunt) {
                         src: ['./dist/vendor/**/translations.en.json',
                               './dist/vendor/**/translations.fr.json',
                               './dist/vendor/**/translations.nl.json',
-                              './dist/app/**/translations.en.json', 
-                              './dist/app/**/translations.fr.json', 
+                              './dist/app/**/translations.en.json',
+                              './dist/app/**/translations.fr.json',
                               './dist/app/**/translations.nl.json']
                     }
                 ]
