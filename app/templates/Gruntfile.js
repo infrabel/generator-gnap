@@ -50,6 +50,7 @@ module.exports = function(grunt) {
                             connect().use('/css', connect.static('./.tmp/css')),
                             connect.static('./src'),
                             connect().use('/node_modules', connect.static('./node_modules')),
+                            connect().use('/bower_components', connect.static('./bower_components')),
                             connect().use('/js/gnap', connect.static('./node_modules/<%= themeName %>/js/gnap')),
                             connect().use('/js/angular', connect.static('./node_modules/<%= themeName %>/js/angular'))
                         ];
