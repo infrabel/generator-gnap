@@ -165,23 +165,23 @@ var GNaPGenerator = yeoman.generators.Base.extend({
 
         self.log(clc.green('   create') + ' theme (' + clc.cyan(self.themeName) + ')');
         self.npmInstall([self.themeName], {}, function() {
-            self.npmInstall(['grunt',
-                             'grunt-autoprefixer',
-                             'grunt-contrib-clean',
-                             'grunt-contrib-concat',
-                             'grunt-contrib-connect',
-                             'grunt-contrib-copy',
-                             'grunt-contrib-cssmin',
-                             'grunt-contrib-htmlmin',
-                             'grunt-contrib-jshint',
-                             'grunt-contrib-uglify',
-                             'grunt-contrib-watch',
-                             'grunt-rev',
-                             'grunt-text-replace',
-                             'grunt-usemin',
-                             'jshint-stylish',
-                             'load-grunt-tasks',
-                             'time-grunt'], { 'saveDev': true }, function() {
+            self.npmInstall(['grunt@0.4.5',
+                             'grunt-autoprefixer@3.0.3',
+                             'grunt-contrib-clean@0.6.0',
+                             'grunt-contrib-concat@0.5.1',
+                             'grunt-contrib-connect@0.10.1',
+                             'grunt-contrib-copy@0.8.0',
+                             'grunt-contrib-cssmin@0.12.3',
+                             'grunt-contrib-htmlmin@0.4.0',
+                             'grunt-contrib-jshint@0.11.2',
+                             'grunt-contrib-uglify@0.9.1',
+                             'grunt-contrib-watch@0.6.1',
+                             'grunt-rev@0.1.0',
+                             'grunt-text-replace@0.4.0',
+                             'grunt-usemin@3.0.0',
+                             'jshint-stylish@2.0.1',
+                             'load-grunt-tasks@3.2.0',
+                             'time-grunt@1.2.1'], { 'saveDev': true }, function() {
                 self.log();
                 self.log(clc.green('!') + clc.whiteBright(' Successfully created ') + clc.cyan(self.appName));
                 self.log(clc.green('!') + clc.whiteBright(' To see your site, run:'));
